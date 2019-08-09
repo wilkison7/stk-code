@@ -1342,8 +1342,8 @@ void ClientLobby::sendChat(irr::core::stringw text)
         else
             name = player->getName();
         chat->encodeString16(name + L": " + text);
-
-        STKHost::get()->sendToServer(chat, true);
+        // All servers atm has 3 channel reserved
+        STKHost::get()->sendToServer(chat, true, EVENT_CHANNEL_CHAT);
         delete chat;
     }
 }   // sendChat

@@ -602,9 +602,14 @@ void ServerLobby::handleChat(Event* event)
         chat->setSynchronous(true);
         chat->addUInt8(LE_CHAT).encodeString16(message);
         const bool game_started = m_state.load() != WAITING_FOR_START_GAME;
+
+        // Split sent for channel
         STKHost::get()->sendPacketToAllPeersWith(
             [game_started, sender_in_game](STKPeer* p)
             {
+                if (p->clientHasChatChannel())
+                    return false;
+
                 if (game_started)
                 {
                     if (p->isWaitingForGame() && !sender_in_game)
@@ -613,7 +618,23 @@ void ServerLobby::handleChat(Event* event)
                         return false;
                 }
                 return true;
-            }, chat);
+            }, chat, true/*reliable*/, EVENT_CHANNEL_NORMAL);
+        STKHost::get()->sendPacketToAllPeersWith(
+            [game_started, sender_in_game](STKPeer* p)
+            {
+                if (!p->clientHasChatChannel())
+                    return false;
+
+                if (game_started)
+                {
+                    if (p->isWaitingForGame() && !sender_in_game)
+                        return false;
+                    if (!p->isWaitingForGame() && sender_in_game)
+                        return false;
+                }
+                return true;
+            }, chat, true/*reliable*/, EVENT_CHANNEL_CHAT);
+
         delete chat;
     }
 }   // handleChat
