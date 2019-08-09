@@ -60,6 +60,7 @@ enum ENetCommandType : unsigned int
     ECT_DISCONNECT = 1,
     ECT_RESET = 2
 };
+enum EVENT_CHANNEL : uint8_t;
 
 class STKHost
 {
@@ -228,8 +229,10 @@ public:
     // ------------------------------------------------------------------------
     void sendPacketToAllPeers(NetworkString *data, bool reliable = true);
     // ------------------------------------------------------------------------
+    // 0 is EVENT_CHANNEL_NORMAL (default sent encrypted)
     void sendPacketToAllPeersWith(std::function<bool(STKPeer*)> predicate,
-                                  NetworkString* data, bool reliable = true);
+                                  NetworkString* data, bool reliable = true,
+                                  EVENT_CHANNEL channel = (EVENT_CHANNEL)0);
     // ------------------------------------------------------------------------
     /** Returns true if this client instance is allowed to control the server.
      *  It will auto transfer ownership if previous server owner disconnected.
@@ -330,7 +333,9 @@ public:
     /** Returns the host id of this host. */
     uint32_t getMyHostId() const                          { return m_host_id; }
     // ------------------------------------------------------------------------
-    void sendToServer(NetworkString *data, bool reliable = true);
+    // 0 is EVENT_CHANNEL_NORMAL (default sent encrypted)
+    void sendToServer(NetworkString *data, bool reliable = true,
+                      EVENT_CHANNEL channel = (EVENT_CHANNEL)0);
     // ------------------------------------------------------------------------
     /** True if this is a client and server in graphics mode made by server
      *  creation screen. */

@@ -51,6 +51,7 @@ enum PeerDisconnectInfo : unsigned int
     PDI_KICK = 2, //!< Kick disconnection
     PDI_KICK_HIGH_PING = 3, //!< Too high ping, kicked by server
 };   // PeerDisconnectInfo
+enum EVENT_CHANNEL : uint8_t;
 
 /*! \class STKPeer
  *  \brief Represents a peer.
@@ -111,8 +112,9 @@ public:
     // ------------------------------------------------------------------------
     ~STKPeer();
     // ------------------------------------------------------------------------
+    // 0 is EVENT_CHANNEL_NORMAL (default sent encrypted)
     void sendPacket(NetworkString *data, bool reliable = true,
-                    bool encrypted = true);
+                    EVENT_CHANNEL channel = (EVENT_CHANNEL)0);
     // ------------------------------------------------------------------------
     void disconnect();
     // ------------------------------------------------------------------------

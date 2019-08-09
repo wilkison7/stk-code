@@ -100,9 +100,10 @@ void STKPeer::reset()
 /** Sends a packet to this host.
  *  \param data The data to send.
  *  \param reliable If the data is sent reliable or not.
- *  \param encrypted If the data is sent encrypted or not.
+ *  \param channel At which channel id to send.
  */
-void STKPeer::sendPacket(NetworkString *data, bool reliable, bool encrypted)
+void STKPeer::sendPacket(NetworkString *data, bool reliable,
+                         EVENT_CHANNEL channel)
 {
     if (m_disconnected.load())
         return;
@@ -114,7 +115,7 @@ void STKPeer::sendPacket(NetworkString *data, bool reliable, bool encrypted)
         return;
 
     ENetPacket* packet = NULL;
-    if (m_crypto && encrypted)
+    if (m_crypto && Event::needCrypto(channel))
     {
         packet = m_crypto->encryptSend(*data, reliable);
     }
@@ -135,9 +136,7 @@ void STKPeer::sendPacket(NetworkString *data, bool reliable, bool encrypted)
                 packet->dataLength, a.toString().c_str(),
                 StkTime::getRealTime());
         }
-        m_host->addEnetCommand(m_enet_peer, packet,
-                encrypted ? EVENT_CHANNEL_NORMAL : EVENT_CHANNEL_UNENCRYPTED,
-                ECT_SEND_PACKET);
+        m_host->addEnetCommand(m_enet_peer, packet, channel, ECT_SEND_PACKET);
     }
 }   // sendPacket
 

@@ -1296,9 +1296,11 @@ void STKHost::sendPacketExcept(STKPeer* peer, NetworkString *data,
  *  \param predicate boolean function for peer to predicate whether to send
  *  \param data Data to sent.
  *  \param reliable If the data should be sent reliable or now.
+ *  \param channel At which channel id to send.
  */
 void STKHost::sendPacketToAllPeersWith(std::function<bool(STKPeer*)> predicate,
-                                       NetworkString* data, bool reliable)
+                                       NetworkString* data, bool reliable,
+                                       EVENT_CHANNEL channel)
 {
     std::lock_guard<std::mutex> lock(m_peers_mutex);
     for (auto p : m_peers)
@@ -1307,19 +1309,24 @@ void STKHost::sendPacketToAllPeersWith(std::function<bool(STKPeer*)> predicate,
         if (!stk_peer->isValidated())
             continue;
         if (predicate(stk_peer))
-            stk_peer->sendPacket(data, reliable);
+            stk_peer->sendPacket(data, reliable, channel);
     }
 }   // sendPacketToAllPeersWith
 
 //-----------------------------------------------------------------------------
-/** Sends a message from a client to the server. */
-void STKHost::sendToServer(NetworkString *data, bool reliable)
+/** Sends a message from a client to the server.
+ *  \param data Data to sent.
+ *  \param reliable If the data should be sent reliable or now.
+ *  \param channel At which channel id to send.
+ */
+void STKHost::sendToServer(NetworkString* data, bool reliable,
+                           EVENT_CHANNEL channel)
 {
     std::lock_guard<std::mutex> lock(m_peers_mutex);
     if (m_peers.empty())
         return;
     assert(NetworkConfig::get()->isClient());
-    m_peers.begin()->second->sendPacket(data, reliable);
+    m_peers.begin()->second->sendPacket(data, reliable, channel);
 }   // sendToServer
 
 //-----------------------------------------------------------------------------

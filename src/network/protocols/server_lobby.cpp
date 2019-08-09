@@ -2627,7 +2627,7 @@ void ServerLobby::kickPlayerWithReason(STKPeer* peer, const char* reason) const
     message->addUInt8(LE_CONNECTION_REFUSED).addUInt8(RR_BANNED);
     message->encodeString(std::string(reason));
     peer->cleanPlayerProfiles();
-    peer->sendPacket(message, true/*reliable*/, false/*encrypted*/);
+    peer->sendPacket(message, true/*reliable*/, EVENT_CHANNEL_UNENCRYPTED);
     peer->reset();
     delete message;
 }   // kickPlayerWithReason
@@ -2665,7 +2665,7 @@ void ServerLobby::connectionRequested(Event* event)
         message->setSynchronous(true);
         message->addUInt8(LE_CONNECTION_REFUSED).addUInt8(RR_BUSY);
         // send only to the peer that made the request and disconnect it now
-        peer->sendPacket(message, true/*reliable*/, false/*encrypted*/);
+        peer->sendPacket(message, true/*reliable*/, EVENT_CHANNEL_UNENCRYPTED);
         peer->reset();
         delete message;
         Log::verbose("ServerLobby", "Player refused: selection started");
@@ -2681,7 +2681,7 @@ void ServerLobby::connectionRequested(Event* event)
         message->setSynchronous(true);
         message->addUInt8(LE_CONNECTION_REFUSED)
                 .addUInt8(RR_INCOMPATIBLE_DATA);
-        peer->sendPacket(message, true/*reliable*/, false/*encrypted*/);
+        peer->sendPacket(message, true/*reliable*/, EVENT_CHANNEL_UNENCRYPTED);
         peer->reset();
         delete message;
         Log::verbose("ServerLobby", "Player refused: wrong server version");
@@ -2762,7 +2762,7 @@ void ServerLobby::connectionRequested(Event* event)
         message->addUInt8(LE_CONNECTION_REFUSED)
             .addUInt8(RR_INCOMPATIBLE_DATA);
         peer->cleanPlayerProfiles();
-        peer->sendPacket(message, true/*reliable*/, false/*encrypted*/);
+        peer->sendPacket(message, true/*reliable*/, EVENT_CHANNEL_UNENCRYPTED);
         peer->reset();
         delete message;
         Log::verbose("ServerLobby", "Player has incompatible karts / tracks.");
@@ -2798,7 +2798,7 @@ void ServerLobby::connectionRequested(Event* event)
         NetworkString *message = getNetworkString(2);
         message->setSynchronous(true);
         message->addUInt8(LE_CONNECTION_REFUSED).addUInt8(RR_TOO_MANY_PLAYERS);
-        peer->sendPacket(message, true/*reliable*/, false/*encrypted*/);
+        peer->sendPacket(message, true/*reliable*/, EVENT_CHANNEL_UNENCRYPTED);
         peer->reset();
         delete message;
         Log::verbose("ServerLobby", "Player refused: too many players");
@@ -2824,7 +2824,7 @@ void ServerLobby::connectionRequested(Event* event)
         NetworkString* message = getNetworkString(2);
         message->setSynchronous(true);
         message->addUInt8(LE_CONNECTION_REFUSED).addUInt8(RR_INVALID_PLAYER);
-        peer->sendPacket(message, true/*reliable*/, false/*encrypted*/);
+        peer->sendPacket(message, true/*reliable*/, EVENT_CHANNEL_UNENCRYPTED);
         peer->reset();
         delete message;
         Log::verbose("ServerLobby", "Player refused: invalid player");
@@ -2864,7 +2864,7 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
         message->setSynchronous(true);
         message->addUInt8(LE_CONNECTION_REFUSED)
                 .addUInt8(RR_INCORRECT_PASSWORD);
-        peer->sendPacket(message, true/*reliable*/, false/*encrypted*/);
+        peer->sendPacket(message, true/*reliable*/, EVENT_CHANNEL_UNENCRYPTED);
         peer->reset();
         delete message;
         Log::verbose("ServerLobby", "Player refused: incorrect password");
@@ -2886,7 +2886,7 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
             message->setSynchronous(true);
             message->addUInt8(LE_CONNECTION_REFUSED)
                 .addUInt8(RR_TOO_MANY_PLAYERS);
-            peer->sendPacket(message, true/*reliable*/, false/*encrypted*/);
+            peer->sendPacket(message, true/*reliable*/, EVENT_CHANNEL_UNENCRYPTED);
             peer->reset();
             delete message;
             Log::verbose("ServerLobby", "Player refused: too many players");
@@ -2903,7 +2903,7 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
             message->setSynchronous(true);
             message->addUInt8(LE_CONNECTION_REFUSED)
                 .addUInt8(RR_INVALID_PLAYER);
-            peer->sendPacket(message, true/*reliable*/, false/*encrypted*/);
+            peer->sendPacket(message, true/*reliable*/, EVENT_CHANNEL_UNENCRYPTED);
             peer->reset();
             delete message;
             Log::verbose("ServerLobby", "Player refused: invalid player");
