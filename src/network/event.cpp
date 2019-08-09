@@ -75,8 +75,7 @@ Event::Event(ENetEvent* event, std::shared_ptr<STKPeer> peer)
         {
             throw std::runtime_error("Unencrypted content at wrong state.");
         }
-        if (m_peer->getCrypto() && (event->channelID == EVENT_CHANNEL_NORMAL ||
-            event->channelID == EVENT_CHANNEL_DATA_TRANSFER))
+        if (m_peer->getCrypto() && needCrypto(event->channelID))
         {
             m_data = m_peer->getCrypto()->decryptRecieve(event->packet);
         }

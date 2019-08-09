@@ -53,8 +53,9 @@ enum EVENT_CHANNEL : uint8_t
 {
     EVENT_CHANNEL_NORMAL = 0,   //!< Normal channel (encrypted if supported)
     EVENT_CHANNEL_UNENCRYPTED = 1,//!< Unencrypted channel
-    EVENT_CHANNEL_DATA_TRANSFER = 2,//!< Data transfer channel (like game replay)
-    EVENT_CHANNEL_COUNT = 3
+    EVENT_CHANNEL_CHAT = 2,//!< Chat message
+    EVENT_CHANNEL_DATA_TRANSFER = 3,//!< Data transfer channel (like game replay)
+    EVENT_CHANNEL_COUNT = 4
 };
 
 enum PeerDisconnectInfo : unsigned int;
@@ -92,7 +93,23 @@ private:
 public:
          Event(ENetEvent* event, std::shared_ptr<STKPeer> peer);
         ~Event();
-
+    // ------------------------------------------------------------------------
+    /** Check if data from peer at such channel id require crypto handling. */
+    static bool needCrypto(uint8_t channel_id)
+    {
+        switch (channel_id)
+        {
+            case EVENT_CHANNEL_UNENCRYPTED:
+                return false;
+            case EVENT_CHANNEL_NORMAL:
+            case EVENT_CHANNEL_CHAT:
+            case EVENT_CHANNEL_DATA_TRANSFER:
+                return true;
+            default:
+                return false;
+        }
+        return false;
+    }
     // ------------------------------------------------------------------------
     /** Returns the type of this event. */
     EVENT_TYPE getType() const { return m_type; }

@@ -74,6 +74,8 @@ protected:
 
     std::atomic_bool m_warned_for_high_ping;
 
+    std::atomic_bool m_has_chat_channel;
+
     /** Host id of this peer. */
     uint32_t m_host_id;
 
@@ -237,10 +239,16 @@ public:
     }
     // ------------------------------------------------------------------------
     void setClientCapabilities(std::set<std::string>& caps)
-                                   { m_client_capabilities = std::move(caps); }
+    {
+        m_client_capabilities = std::move(caps);
+        m_has_chat_channel.store(m_client_capabilities.find("chat_channel") !=
+            m_client_capabilities.end());
+    }
     // ------------------------------------------------------------------------
     const std::set<std::string>& getClientCapabilities() const
                                               { return m_client_capabilities; }
+    // ------------------------------------------------------------------------
+    bool clientHasChatChannel() const            { return m_has_chat_channel; }
 };   // STKPeer
 
 #endif // STK_PEER_HPP

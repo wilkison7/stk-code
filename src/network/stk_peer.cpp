@@ -44,6 +44,7 @@ STKPeer::STKPeer(ENetPeer *enet_peer, STKHost* host, uint32_t host_id)
     m_spectator.store(false);
     m_disconnected.store(false);
     m_warned_for_high_ping.store(false);
+    m_has_chat_channel.store(false);
     m_last_activity.store((int64_t)StkTime::getMonoTimeMs());
 }   // STKPeer
 
